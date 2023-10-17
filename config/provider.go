@@ -10,12 +10,18 @@ import (
 
 	ujconfig "github.com/upbound/upjet/pkg/config"
 
-	"github.com/upbound/upjet-provider-template/config/null"
+	"github.com/crossplane-contrib/provider-vultr/config/baremetal"
+	"github.com/crossplane-contrib/provider-vultr/config/block"
+	"github.com/crossplane-contrib/provider-vultr/config/compute"
+	"github.com/crossplane-contrib/provider-vultr/config/database"
+	"github.com/crossplane-contrib/provider-vultr/config/kubernetes"
+	"github.com/crossplane-contrib/provider-vultr/config/loadbalancer"
+	"github.com/crossplane-contrib/provider-vultr/config/object"
 )
 
 const (
-	resourcePrefix = "template"
-	modulePath     = "github.com/upbound/upjet-provider-template"
+	resourcePrefix = "vultr"
+	modulePath     = "github.com/crossplane-contrib/provider-vultr"
 )
 
 //go:embed schema.json
@@ -31,11 +37,17 @@ func GetProvider() *ujconfig.Provider {
 		ujconfig.WithFeaturesPackage("internal/features"),
 		ujconfig.WithDefaultResourceOptions(
 			ExternalNameConfigurations(),
+			GroupKindOverrides(),
 		))
 
 	for _, configure := range []func(provider *ujconfig.Provider){
-		// add custom config functions
-		null.Configure,
+		kubernetes.Configure,
+		object.Configure,
+		compute.Configure,
+		loadbalancer.Configure,
+		database.Configure,
+		baremetal.Configure,
+		block.Configure,
 	} {
 		configure(pc)
 	}
